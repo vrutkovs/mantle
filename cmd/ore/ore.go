@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/coreos/pkg/capnslog"
 	"github.com/spf13/cobra"
 
 	"github.com/coreos/mantle/cli"
@@ -25,8 +26,23 @@ var (
 		Use:   "ore [command]",
 		Short: "cloud image creation and upload tools",
 	}
+
+	logDebug   bool
+	logVerbose bool
+	logLevel   = capnslog.NOTICE
+	plog = capnslog.NewPackageLogger("github.com/coreos/mantle", "ore")
 )
 
 func main() {
+	root.PersistentFlags().Var(&logLevel, "log-level",
+		"Set global log level.")
+	root.PersistentFlags().BoolVarP(&logVerbose, "verbose", "v", false,
+		"Alias for --log-level=INFO")
+	root.PersistentFlags().BoolVarP(&logDebug, "debug", "d", false,
+		"Alias for --log-level=DEBUG")
+	cli.WrapPreRun(main, func(cmd *cobra.Command, args []string) error {
+		cli.startLogging(cmd)
+		return nil
+	})
 	cli.Execute(root)
 }
