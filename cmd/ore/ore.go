@@ -40,8 +40,8 @@ func main() {
 		"Alias for --log-level=INFO")
 	root.PersistentFlags().BoolVarP(&logDebug, "debug", "d", false,
 		"Alias for --log-level=DEBUG")
-	cli.WrapPreRun(main, func(cmd *cobra.Command, args []string) error {
-		cli.startLogging(cmd)
+	cli.WrapPreRun(root, func(cmd *cobra.Command, args []string) error {
+		cli.StartLogging(cmd)
 		return nil
 	})
 	cli.Execute(root)
